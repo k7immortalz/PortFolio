@@ -1,0 +1,171 @@
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+
+@Component({
+  selector: 'app-skills',
+  templateUrl: './skills.component.html',
+  styleUrls: ['./skills.component.css']
+})
+export class SkillsComponent implements OnInit {
+
+  radius = 240;
+  autoRotate = true;
+  rotateSpeed = -60;
+  imgWidth = 120;
+  imgHeight = 170;
+  bgMusicURL = "https://api.soundcloud.com/tracks/143041228/stream?client_id=587aa2d384f7333a886010d5f52f302a";
+  bgMusicControls = true;
+
+  @ViewChild('spinContainer', { static: true }) spinContainer: ElementRef | undefined;
+  @ViewChild('ground', { static: true }) ground: ElementRef | undefined;
+
+  tX = 0;
+  tY = 10;
+  desX = 0;
+  desY = 0;
+
+  odrag: { element: HTMLElement | null, timer?: number } = {
+    element: null,
+    timer: undefined
+  };
+
+  constructor() {}
+
+  ngOnInit() {
+    setTimeout(() => this.init(), 100);
+  }
+
+  private init(delayTime?: number) {
+    const ospin = this.spinContainer?.nativeElement;
+    if (!ospin) {
+      console.error("spin-container element not found.");
+      return;
+    }
+    const aImg = Array.from(ospin.getElementsByTagName("img")) as HTMLImageElement[];
+    const aVid = Array.from(ospin.getElementsByTagName("video")) as HTMLVideoElement[];
+
+    const aEle = [...aImg, ...aVid];
+
+    ospin.style.width = this.imgWidth + "px";
+    ospin.style.height = this.imgHeight + "px";
+
+    const groundElement = this.ground?.nativeElement;
+    if (!groundElement) {
+      console.error("ground element not found.");
+      return;
+    }
+    groundElement.style.width = this.radius * 3 + "px";
+    groundElement.style.height = this.radius * 3 + "px";
+
+    for (let i = 0; i < aEle.length; i++) {
+      aEle[i].style.transform =
+        "rotateY(" + (i * (360 / aEle.length)) +
+        "deg) translateZ(" + this.radius + "px)";
+      aEle[i].style.transition = "transform 1s";
+      aEle[i].style.transitionDelay =
+        (delayTime || (aEle.length - i) / 4) + "s";
+    }
+
+    this.autoSpin();
+    this.addBackgroundMusic();
+    this.setupEvents();
+  }
+
+  private applyTransform(obj: any, tX: number, tY: number) {
+    if (obj && obj.style) {
+      if (tY > 180) tY = 180;
+      if (tY < 0) tY = 0;
+
+      obj.style.transform = `rotateX(${-tY}deg) rotateY(${tX}deg)`;
+    }
+  }
+
+  private playSpin(yes: boolean) {
+    const ospin = this.spinContainer?.nativeElement;
+    if (!ospin) {
+      console.error("spin-container element not found.");
+      return;
+    }
+    ospin.style.animationPlayState = yes ? "running" : "paused";
+  }
+
+  private autoSpin() {
+    if (this.autoRotate) {
+      const ospin = this.spinContainer?.nativeElement;
+      if (!ospin) {
+        console.error("spin-container element not found.");
+        return;
+      }
+      const animationName = this.rotateSpeed > 0 ? "spin" : "spinRevert";
+      ospin.style.animation = `${animationName} ${Math.abs(this.rotateSpeed)}s infinite linear`;
+    }
+  }
+
+  private addBackgroundMusic() {
+    if (this.bgMusicURL) {
+      const musicContainer = document.getElementById("music-container");
+      if (!musicContainer) {
+        console.error("music-container element not found.");
+        return;
+      }
+      musicContainer.innerHTML += `
+        <audio src="${this.bgMusicURL}" ${this.bgMusicControls ? "controls" : ""} autoplay loop>
+          <p>If you are reading this, it is because your browser does not support the audio element.</p>
+        </audio>
+      `;
+    }
+  }
+
+  private setupEvents() {
+    document.onpointerdown = (e) => {
+      if (this.odrag.element) {
+        clearInterval(this.odrag.timer);
+        e = e || window.event;
+        let sX = e.clientX,
+            sY = e.clientY;
+
+        document.onpointermove = (e) => {
+          e = e || window.event;
+          const nX = e.clientX,
+                nY = e.clientY;
+          let desX = nX - sX,
+              desY = nY - sY;
+          this.tX += desX * 0.1;
+          this.tY += desY * 0.1;
+          this.applyTransform(this.odrag.element!, this.tX, this.tY);
+          sX = nX;
+          sY = nY;
+        };
+
+        document.onpointerup = (e) => {
+          if (this.odrag.timer) {
+            clearInterval(this.odrag.timer);
+          }
+          this.odrag.timer = setInterval(() => {
+            this.desX *= 0.95;
+            this.desY *= 0.95;
+            this.tX += this.desX * 0.1;
+            this.tY += this.desY * 0.1;
+            this.applyTransform(this.odrag, this.tX, this.tY);
+            this.playSpin(false);
+            if (Math.abs(this.desX) < 0.5 && Math.abs(this.desY) < 0.5) {
+              clearInterval(this.odrag.timer);
+              this.playSpin(true);
+            }
+          }, 17);
+          document.onpointermove = document.onpointerup = null;
+        };
+      }
+      return false;
+    };
+
+    document.addEventListener("wheel", (e) => {
+      e = e || window.event;
+      const d = e.deltaY / 20 || -e.detail;
+      this.radius += d;
+      this.init(1);
+    });
+  }
+
+  // ... other methods ...
+
+}

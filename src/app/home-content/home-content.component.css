@@ -1,0 +1,135 @@
+.about{
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+.subC{
+    color: #0872BF;
+}
+.imgcon{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+.col-img{
+  border-radius: 84% 84% 34% 34%;
+}
+.bg-red{
+background: rgba(8, 114, 191, 0.15);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(3.7px);
+-webkit-backdrop-filter: blur(3.7px);
+border: 1px solid rgba(8, 114, 191, 0.19);
+padding: 10px;
+}
+.servImg{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.fs{
+    font-size: 18px;
+}
+
+
+
+
+
+section 
+{
+  padding-top:25vw;
+}
+
+
+
+.card 
+{
+  background: rgba(44, 168, 190, 0.199);
+   border-radius: 10px;
+   border: 1px solid rgba(255,255,255,0.4);
+    position:relative;
+  color:white;
+  z-index:1;
+    backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.card-pic 
+{
+  width:12rem;
+background-blend-mode: hard-light; 
+  margin:-20vw auto;
+}
+
+@media(min-width:991px)
+{
+  section 
+  {
+    padding-top:15vw;
+  }
+  section::before 
+  {
+     left: 50%;
+      width: 30vw;
+  }
+  .card-pic 
+  {
+   position:absolute;
+    left:-6vw;
+    top:-5vw;
+    margin:0; 
+  }
+}
+
+h5
+{
+  font-size:1.8rem;
+  font-weight:bold;
+}
+
+
+
+.line 
+{
+  width:100%;
+  height:4px;
+  background-color:#5CF5CB;
+  opacity:0.7;
+  margin-bottom:10px;
+}
+
+i
+{
+  position:absolute;
+  right:-2vw;
+  bottom:-1vw;
+  z-index:2;
+  color:white;
+	font-size:3rem;
+  background: rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+	padding: 1rem;
+	border-radius: 10px;
+	transition: all .6s ease-in-out;
+   backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+@keyframes SlowFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+.slowfloat2s {
+    -webkit-animation: SlowFloat 2s infinite  alternate;
+    animation: SlowFloat 2s infinite  alternate;
+}
+
+.slowfloat3s {
+    -webkit-animation: SlowFloat 3s infinite  alternate;
+    animation: SlowFloat 3s infinite  alternate;
+}
+
